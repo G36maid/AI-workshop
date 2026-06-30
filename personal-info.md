@@ -92,6 +92,86 @@ Proxmox Cluster 跑 TrueNAS + OPNsense + 多種 Docker 服務，ZFS 底層、Zer
 - dotfiles 裡自寫 `oc()` zsh function：把 opencode 包進專屬 tmux session（以當前目錄命名）、自動在 4096–5096 選 free port（export 成 `$OPENCODE_PORT`）、可 `--resume`
 - 同時跑多個 agent 來源，並用 `agent-quota` 監控訂閱限流
 
+#### 為何選 opencode（哲學對齊）
+講者從 **ThePrimeagen 的 Standup podcast**（Dax Raad 來賓，講「agent 是什麼」+ opencode，見 `references.md` §7）認識此工具，**自 v0.1.0 起用**。三個設計理念完全對齊講者：
+
+> **同場加映**：此 podcast 也是 **`insight.md` INSIGHT-3（agent = LLM + Tools + Loops）的直接出處**——Adam 在 [04:32] 給出此定義，講者從此吸收此心智模型。完整 timestamped 內容見 `references.md` §7.4（含 LSP 回授驗證、vibe benchmarking、human-in-loop 等關鍵討論）。
+
+| 設計理念 | opencode 實作 | 對應 insight |
+|---|---|---|
+| **No vendor lock-in** | 75+ provider（via Models.dev），`provider/model-id` 格式可插任意模型（含 local model）；開源（179K stars / 900 contributors）| INSIGHT-4（模型自由組合）|
+| **Plan / Build 雙模式** | `plan`（read-only 分析，**嚴禁 edit codebase，但允許 edit `.opencode/plans/*.md`**——能寫計畫卻碰不到程式碼）vs `build`（full access）。permission 系統 allow/ask/deny，bash 支援 glob（`git *` allow、`rm *` deny）、`external_directory` 管專案外存取 | INSIGHT-7（關注分離）+「用戶極大自定性」|
+| **極大自定性** | agent 可用 JSON（`opencode.json`）或 **markdown**（`.opencode/agents/*.md`，frontmatter + body 當 system prompt）定義；primary / subagent / hidden system agents（compaction/title/summary）；config deep-merge；escape hatches（`OPENCODE_DISABLE_PROJECT_CONFIG`、`OPENCODE_PURE`）| markdown 定義 agent 的 pattern 跟 AGENTS.md（INSIGHT-8）/ SKILL.md **同源** |
+
+#### 社群追蹤
+常看 **Dax（@thedxr）** 與 SST/OpenCode 團隊在 X 的開發見解，**包含與大公司的公開爭論（理念之爭）**——這是講者 INSIGHT-9 的初級來源之一（直接吸收源頭業界辯論，而非繁中搬運層）。
+
+#### Meta 連結
+講者日常用的 opencode/omo，**就是本籌備 session 正在跑的 orchestrator**（其 explore/oracle/librarian/metis/momus subagent 結構 = opencode subagent 系統的訂製版本）。講者「活在自家哲學對齊的工具裡」。
+
+#### omo（oh-my-openagent）的發現與 Sisyphus 偏好
+- **發現時序**：opencode 之後，講者繼續 OSS 貢獻、開發與修課期間，發現了 **oh-my-openagent（當時叫 oh-my-opencode）**——建立在 opencode 之上的進階 harness（即本 session 跑的 orchestrator）。
+- **改名背景**：npm 包仍名 `oh-my-opencode`（過渡期 dual-publish 為 `oh-my-openagent`）；config 同時認 `oh-my-opencode.json[c]` 與 `oh-my-openagent.json[c]`。改名主因是與 sst/opencode（Dax 的工具）消歧——omo 是 opencode **之上**的 harness，不是同一層。Maintainer: Yeongyu Kim。
+- **講者最愛的設計：Sisyphus 的 todo-driven 持續性**。Sisyphus（希臘神話推巨柱者）= omo 主 orchestrator：① 開工前先建 todo list；② 若 LLM 想結束但 todo 未完 → **hook 注入（鞭打）它繼續執行**；③ 持續到所有 todo 完成才允許結束。
+- **對比另一派：Ralph Loop**（Geoffrey Huntley 提出，「Ralph is a Bash loop」，命名自 Simpson 的 Ralph Wiggum）。Ralph 不看 todo，而是**每次 agent 結束就把同一 prompt 重新注入**，靠檔案系統 + git 當記憶體，直到吐出 completion promise。
+
+| 機制 | 誰決定還沒完 | 記憶放哪 |
+|---|---|---|
+| **Sisyphus Todo Continuation** | agent 自建 todo list | 同 session 對話 |
+| **Ralph Loop** | 外部固定 prompt | 檔案系統 + git history（每輪 fresh context）|
+
+- 講者**偏好 Sisyphus**（todo-driven，更尊重 agent 的計畫）。omo 兩種都內建（Todo Enforcer 自動 + `/ralph-loop` 指令）。
+- **自我指涉**：本 session 就是 Sisyphus 在跑，且 system prompt 那句「YOUR TODO CREATION WOULD BE TRACKED BY HOOK([SYSTEM REMINDER - TODO CONTINUATION])」就是這套機制的觸發條件——**講者邊講邊被它驅動**。
+- 完整 omo/Ralph 生態見 `references.md` §9；持續性機制作為 INSIGHT-3 的延伸見 `insight.md` INSIGHT-3。
+
+#### 學術延伸：Hades 資安 agent（cs-special-topics-2 專題）
+講者不只是 omo 使用者，更在 NTNU「計算機科學專題二」課程中**以 omo 為基礎打造一個完整的資安 agent 系統（Hades）**——718 行架構報告（`~/School/ntnu/cs-special-topics-2/docs/report.md`）。
+
+- **Hades** = 講者透過 omo config 新增的 primary agent，專責資安分析；整合 VulnClaw（21 skills / 180 references）+ Ghidra-MCP（249 逆向工具）。
+- **零代碼整合**：純 config 實現，不改任何開源專案原始碼——展示 omo 的「極大自定性」不是口號，呼應 INSIGHT-8（markdown/config 定義 agent 行為）。
+- **多模型分工**：Hades 用 **GLM-5.1**（SWE-Bench Pro #1、CyberGym 開源 #1、MIT 授權、便宜）做主力；Oracle 用 GPT-5.5、Explore/Librarian 用 gpt-5.4-mini。
+- **GLM 偏好的起點**：講者於 **2026-01-19** 看到 **Eno Reyes（@EnoReyes，Factory）** 在 X 發布的貼文（131.5K views / 814 likes / 479 bookmarks）：「The most cost effective combination right now is setting Opus as your plan model and **GLM 4.7** or GPT-5.2-Codex as your execution model. Gives you basically the same performance as opus, for a fraction of the tokens.」——這是講者接觸開源 GLM 模型的精確觸發點。GLM-4.7 於 2025-12-22 由 Z.ai 發布（SWE-bench 73.8%、$0.60/M），是當時最強的便宜 coding 執行器。軌跡：**GLM-4.7（2025-12）→ GLM-5.1（2026-04，Hades 用）→ GLM-5.2（本 session 用）**。**這正是本 session 跑在 GLM 上的原因**——講者把這條學習曲線延伸到日常。完整 planner-executor 模式與 nuance 見 `references.md` §12。
+- **GLM 偏好的深層理由 = 「最強的開源模型」**：講者選 GLM 不只因便宜，更因它是**開源 + 強**的甜點——MIT 授權、可自架、無 vendor 風險（呼應被 Google ban 的教訓與 INSIGHT-4）。閉源最強是 Claude Fable 5 / Opus 4.8，但講者寧可取「開源最強」也不要「絕對最強但被封閉綁住」。這是價值選擇，不只是效能選擇。
+- **GLM-5.1 → GLM-5.2 切換（2026-06，最近）**：講者長期用 GLM-5.1，但 5.1 只有 **200K context**（偏短），必須靠 **omo subagent 框架 + 精細 prompt 把任務拆小**才能駕馭——這是把 INSIGHT-3（agent = loop）+ INSIGHT-4（decomposition）當作「**用 subagent 拆解擊敗單模型 context 上限**」的技術。**GLM-5.2（2026-06-13 發布，1M context）已被獨立評測認定為「Opus level」**（FrontierSWE 74.4% 僅落後 Opus 4.8 1%、Artificial Analysis Intelligence Index 51 開源 #1、PostTrainBench 勝 Opus 4.7 與 GPT-5.5），講者已切換，不再需要短 context 駕馭術。完整 5.2 benchmark 見 `references.md` §12.1。
+- **provenance 連結**：這條軌跡是 INSIGHT-9（初級來源）的活體示範——講者直接吸收 Eno Reyes 這位 agent 工具圈核心人物（Factory 是 AGENTS.md 開放標準的聯合推動者之一）的第一手實測意見，而非繁中搬運層。
+- **核心創新**：「通用 agent + 領域 skill 注入」——不是為每個分析面向建專門 agent，而是讓通用 agent 在接收任務時動態獲得領域知識，且可同時 spawn 多個 instance 平行分析（INSIGHT-4/7 的進階應用）。
+- **workshop 價值**：這份報告本身就是現成的「如何用 omo 構築領域 agent」教材範本，可直接展示。
+
+#### 親身經歷：被 Google Antigravity ban（INSIGHT-4 的切身實證）
+講者**親身是 2026 上半年 Google Antigravity ban 波的當事人之一**——用了 `opencode-antigravity-auth`（反代 Google Antigravity IDE 模型到 opencode 的 plugin，11K stars）一段時間後，被 Google 終身封號。完整事件見 `references.md` §10.5。
+
+**這是講者 INSIGHT-4（no vendor lock-in）最切身的來源**：不是理論上的偏好，而是被 vendor 執法燙過後的教訓。講者對「多模型組合、不綁單一 provider」的堅持，部分源自此經歷。
+
+**對 workshop 的價值**：第一手「我試過、我被 ban、後來如何」的故事——比任何二手警告都有說服力。可當開場 hook：「你們有人用過把 ChatGPT/Claude/Gemini 訂閱接進其他工具的 plugin 嗎？我被 ban 過。」
+
+#### 實際 config：多 provider 混合（live，已檢查 dotfiles）
+
+講者的 `~/Code/Github/dotfiles/opencode/.config/opencode/oh-my-openagent.json` 是**多 provider 混合的 live 範本**（INSIGHT-4/8 的生產實作）。混了 **4 個 provider 訂閱 / gateway**：
+
+| Provider | 性質 | 用到的模型 |
+|---|---|---|
+| `zai-coding-plan` | Z.ai GLM Coding Plan 訂閱 | glm-5.2、glm-4.7、glm-4.6v（視覺）|
+| `opencode-go` | OpenCode 自家 gateway | glm-5.2、qwen3.7-plus、minimax-m3/m2.7、kimi-k2.6 |
+| `openai` | OpenAI / Codex 訂閱 | gpt-5.5、gpt-5.4-mini-fast、gpt-5.4-mini/nano |
+| `google` | Gemini | gemini-3-flash-preview、gemini-3.1-pro-preview |
+
+**per-agent + per-category 路由 + fallback 鏈**（規劃-執行分離的生產版）：
+- **orchestrator / 規劃**（Sisyphus、Prometheus）：glm-5.2（zai）主力
+- **深度推理**（Oracle、Metis、Momus）：gpt-5.5 high / xhigh
+- **深度執行**（Hephaestus、deep category）：gpt-5.5 medium
+- **批量執行**（Sisyphus-Junior、Atlas）：glm-5.2 → kimi / minimax fallback
+- **快搜**（Explore、Librarian、quick category）：gpt-5.4-mini-fast → glm-4.7 → qwen → minimax → nano
+- **視覺**（Multimodal-Looker）：gemini-3-flash → glm-4.6v
+- **前端 / 創意**（visual-engineering、artistry）：gemini-3.1-pro
+- **困難邏輯**（ultrabrain）：gpt-5.5 xhigh
+
+**關鍵設計**：
+1. **fallback 鏈**：每個 agent 都有 2-5 個 fallback——某 provider 掛了自動換下一個（omo model-fallback hook）。這是「no vendor lock-in」的**韌性價值兌現**：不是哲學，是任一 provider 斷線都不會斷炊。
+2. **規劃-執行分離但反 Oversimplify**：不是教條式「Opus plan + GLM execute」二分，而是細分到「規劃用 GLM、推理用 GPT、視覺用 Gemini、搜尋用 mini」——把 INSIGHT-4 推到極致，同時**迴避 §12.3 的 split 反噬**（因為不是二分，而是依任務性質多路分配）。
+3. **本 session 就是這份 config 的產物**：Sisyphus 設 `zai-coding-plan/glm-5.2`，所以這個 session 跑在 GLM-5.2 上。
+
+→ **workshop 價值**：這份 config 是「show, don't tell」的鎮館之寶——直接展示給學生看「一個真正在用的多 provider config 長這樣」，比十分鐘講 INSIGHT-4 都有用。完整 config 在 dotfiles repo。
+
 ### 5.2 自建 MCP Server（給 agent 真實工具）
 - `zed-mcp-server-markitdown`（Rust + Wasm）— 自己寫
 - 關注並採用：GhidraMCP、bethington/ghidra-mcp（逆向工程 via MCP）、googleworkspace/cli（內建 AI agent skills）
@@ -138,7 +218,12 @@ Proxmox Cluster 跑 TrueNAS + OPNsense + 多種 Docker 服務，ZFS 底層、Zer
 codex / Claude / GitHub Copilot / Gemini / DeepSeek / self-host Ollama / Grok / OpenRouter。
 - 起點：GitHub Copilot student 用量 = pro 級，於是把上面所有模型都試過。
 - 主力：Claude 3.5 → 3.7 → **Claude 4**（隨發布升級）；另自帶 Gemini key 並用。
-- **OpenRouter 作為模型發現 + 實測渠道**：OpenRouter 常最早架上各家最新模型，部分 lab 模型上架時有限時免費。講者會利用這些限免窗口，把新模型丟到**真實工作**上測實力（不是跑 benchmark，是看實戰表現）——這是 INSIGHT-2（把 LLM 當系統實測）與 INSIGHT-4（模型選擇）的日常實踐。
+- **模型篩選 + 實測的三層 workflow**（INSIGHT-2 的精緻版）：① **[Artificial Analysis Intelligence Index](https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index)** 當第一層篩——9 個 benchmark 加權綜合（Agent 34% / Coding 24% / 科學 24% / 一般 18%），追蹤 535+ 模型，含 Openness Index；② **OpenRouter** 限免窗口把候選模型丟到**真實工作**上驗證（看實戰，不只看分數）；③ **openness 當硬篩選條件**（必須開源，這也是 GLM 勝出的關鍵）。**不是「不跑 benchmark」，而是「benchmark 只當第一層篩，實戰才驗證」**——這修正了「反 benchmark」的過度簡化。
+- **模型評測 routine（兩層互補，refines 上一條）**：
+  - **第一層：benchmark landscape**——看 [Artificial Analysis Intelligence Index](https://artificialanalysis.ai)（獨立 LLM benchmark 聚合器，混合品質/速度/價格排名）掌握最新模型版圖，當第一層過濾。
+  - **第二層：real work 驗證**——在 OpenRouter 試用各種開源模型，丟到真實工作上看實戰表現。
+  - **兩層互補**：benchmarks 知道「什麼存在、大概多強」，real work 才是 ground truth。講者先前「用真實工作測、不跑 benchmark」的反 benchmark 立場，**更精確的說法是「不迷信 benchmark 分數，但用它當起點」**。
+- **GLM 偏好的哲學根**：GLM 是當時**最強的開源模型**——**同時滿足「技術最強」與「開源」兩個條件**，這是 Claude（最強但閉源）/ GPT（強但閉源）做不到的組合。對一個有開放生態倫理（§8、INSIGHT-4 道德維度）的講者，GLM 是唯一能在「能力」與「價值」兩軸上都過關的選擇。實測支撐見 cs-special-topics-2 報告（§5.1）：GLM-5.1 SWE-Bench Pro #1、CyberGym 開源 #1。
 
 #### 把外部世界塞進 loop 的技巧
 | 技巧 | 做法 | 為什麼 |
@@ -216,6 +301,31 @@ codex / Claude / GitHub Copilot / Gemini / DeepSeek / self-host Ollama / Grok / 
 - 其中 AGENTS.md 不只是講者個人習慣，是**業界事實標準**（30+ agents 採用、Linux Foundation 治理）——見 `insight.md` INSIGHT-8 與 `references.md` §6。講者自 Zed 支援後幾乎每 repo 都先建。
 - 理論見 `insight.md` INSIGHT-7；**至今最適合直接轉移給學生的 workflow**（不需進階環境、不需付費 API、立即改善課業）。
 
+### 5.12 資訊來源 / 資訊飲食（為何有 insight）
+
+講者的 insight 不憑空而來，來自**直接消費英文初級來源**：
+
+| 來源 | 實際內容（已查證 2026-07-01）| 對應講者哪塊 |
+|---|---|---|
+| **ThePrimeagen**（主頻道）+ **The PrimeTime**（Twitch 剪輯/反應）+ TheVimeagen | ex-Netflix；Neovim/Lua 狂熱（"I am done with vim" → Neovim forever）；i3/tmux/vim 工作流實戰。**註**：原描述提「AI 趨勢」實為次要，主軸是開發生產力與 Vim 文化 | Vim/CLI/tmux 工作流 |
+| **Low Level**（UC6biysICWOJ-C3P4Tyeggzg）| **已確認 = 專做 exploit / vulnerability 的資安頻道**（非 "Low Level Learning"）。實例：copy.fail Linux 全 distro LPE、AppArmor LPE、ISP 0-day（1.2M views）、UEFI Ring -2、M1 cache 漏洞 | Linux kernel CVE / CTF — 完全對齊 |
+| **Tsoding** | 硬派 C/C++ 從零實作（如 "Insane Shadow Data Trick in C"：stb_ds.h、dynamic array、macro、realloc，21 分鐘深論）| 底層實作細節 |
+| **Fireship** | "X in 100 Seconds" 系列 + 快節奏生態評論（如 "Big projects are ditching TypeScript"，3:38 / 1.6M views）。涵蓋語言、框架、AI 工具 | 快速吸收技術新知與生態動態 |
+| **Linus Tech Tips / LTTClips** | PC 硬體評測、科技產品（LTTClips 為剪輯頻道）| homelab（Proxmox/TrueNAS）、Framework Laptop 調校 |
+| **Theo - t3․gg** | **TypeScript / web / JS 框架生態**為主（t3 stack 創造者），如 "The Future of TypeScript"（30 分鐘論 TypeScript Go port）。**註**：原描述「軟體架構」略過廣，主軸是 web 生態與業界轉變 | 系統層以外的 web/JS 工程視野 |
+| X / Twitter 開發者討論 | 即時業界辯論、踩坑 | 第一手趨勢 |
+| GitHub issues / discussions | 真實工程討論、維護者設計取捨 | 工具實際設計取捨（AGENTS.md gotcha 多從此而來）|
+
+> **查證備註**：上表為實際內容查證，非僅 Gemini 從觀看歷史撈的描述。兩處原描述略過廣已修正（ThePrimeagen 的「AI 趨勢」實為次要；Theo 的「軟體架構」實為 TypeScript/web 生態）。「Low Level」並已與同名易混淆的 "Low Level Learning" 區分開。
+
+**關鍵觀察（講者陳述）**：繁中 AI 社群大量內容**只是搬運，或只講工具用法，根本沒有 insight**。講者的優勢正是跨過語言牆直接吸收初級來源。這同時是 workshop 的定位錨點（見 §8）與 `insight.md` INSIGHT-9 的來源。
+
+### 5.13 ACP / agent 協定生態的追蹤
+
+講者 starred `agentclientprotocol/agent-client-protocol`（3.5K stars）與 `openab/openab`（Discord ↔ ACP coding CLI 的 harness）。ACP = **Zed 創造的「editor ↔ agent」開放協定**（2025-08-27，Gemini CLI 為首個整合；2025-10 JetBrains 加入），與 MCP（agent ↔ tools）**互補不競爭**。完整誕生脈絡、與 Zed 關係、LSP/ACP/MCP/A2A 生態全景見 `references.md` §8。
+
+**意義**：ACP 是「editor 側的開放標準」，與 opencode（no vendor lock-in）、AGENTS.md（INSIGHT-8）同屬「**agent 生態在每個邊界走向 open protocol**」這股力量。講者追蹤此生態 = 持續把脈 agent 工具鏈的開放化走向。生態亮點：**已有 GLM 驅動的 ACP agent**（Zhipu AI glm-5.1）——呼應本 session 跑在 GLM 上。
+
 ---
 
 ## 6. AI 工具演化的第一手見證（脈絡）
@@ -277,3 +387,5 @@ codex / Claude / GitHub Copilot / Gemini / DeepSeek / self-host Ollama / Grok / 
 - **可教的概念（工具鏈中立的）**：decomposition、skill 模組化、MCP 給 agent 工具、verification 心態、context 管理、平行 delegation
 - **難轉移的工具鏈（要找替代或降門檻）**：Arch + tmux + terminal、自架 homelab、付費 API quota、opencode/omo 本身（安裝有門檻）
 - **核心張力**：講者 setup 高度個人化且進階；受眾大概率落差很大。workshop 成敗取決於「概念 vs 工具」的切線畫在哪。
+- **workshop 的核心價值主張 = 提供繁中社群缺的 insight 層**：不是教工具用法（那是搬運層在做），而是教「為什麼這樣用」的心智模型（INSIGHT-1~8）。源自講者的英文初級來源資訊飲食（見 §5.12、`insight.md` INSIGHT-9）——這是講者相對於繁中 AI 內容圈的獨特資產。
+- **講者的開放 vs 封閉倫理立場（workshop 定位考量）**：講者因親身被 Google ban（§5.1）+ 見證 Anthropic 跨標準封閉實踐（見 `references.md` §11），對「封閉 vendor」有明確倫理反感，與大量推特開發者共鳴。這讓 workshop 帶有價值選擇色彩——**好處**是真誠、有立場；**風險**是可能變成反 Anthropic 宣傳。設計時需平衡：誠實承認 Claude 模型最強、MCP 是真貢獻，同時指出封閉實踐風險。講者「no vendor lock-in」（INSIGHT-4）因此有道德維度，不只是技術偏好。
