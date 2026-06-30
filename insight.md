@@ -363,3 +363,37 @@ AGENTS.md 不是某家公司的專利，是**業界事實標準**：一份放在
 ### 交叉引用
 - 解釋了為什麼講者能在 INSIGHT-1~8 提供 non-trivial 觀點：他的 input 不一樣。
 - INSIGHT-1 的人類版應用：人腦 = I/O 黑盒子，資訊飲食 = 人的 context engineering。
+
+---
+
+## INSIGHT-10：AI 不位移工程責任，只改變施力點
+
+> **來源**：講者陳述（2026-07-01），作為其 AI agent insight 的收尾立場。
+
+### 核心命題
+前面 1-9 條給了 AI 各種能力（祛魅、構造、組合、資訊飲食）。但**有一件事 AI 再強也不會替你做：工程紀律的最終責任**。AI 加速產出，但 verification、control、signal-filtering、safety 的責任**不位移給 AI，只是改變你施力的位置**。
+
+### 講者的四個施力點（具體判斷）
+
+| 判斷 | 內容 | 責任所在 |
+|---|---|---|
+| **TDD 相對適合 agent** | 測試驅動是與 agent 配合良好的開發法——你定義「done」的客觀標準（測試），agent 去滿足它 | **verification 留在人**：你寫測試，不是 agent |
+| **human-in-loop 看場合** | 認同 human-in-loop，但不是教條——依任務風險 / 複雜度決定介入密度（對比 opencode 官方反激進 async，見 `references.md` §7.4）| **control 留在人**：你決定何時介入 |
+| **LSP 幫助 AI 但有時是噪音** | LSP diagnostics 回授能幫 AI 寫更好（podcast [14:08]、Hermes 設計），但有時是噪音——要過濾 | **signal-filtering 留在人**：你判斷哪些 feedback 該信 |
+| **git 是聖旨，不信 tool revert** | 不要依賴任何 agent/IDE 的 revert/undo；git 才是唯一可信的 source of truth | **safety 留在 canonical 工具**：版本控制是地基，不是 tool 附加功能 |
+
+### 這條洞察拆穿了什麼
+- **拆穿「AI 全自動 = 我不用負責」**：自動化的是執行，不是責任。Summer Yue（`references.md` §13.4）就是「以為 agent 可信、把 verification 交出去」的後果——她得用跑的去搶救 Mac mini。
+- **拆穿「tool 的 revert/undo 夠用」**：agent/IDE 的 revert 是附加功能，會壞、會不一致；git 才是工程上經過幾十年驗證的 source of truth。把 git 當聖旨 = 不把安全網建立在會變的東西上。
+- **拆穿「LSP/JIT feedback 永遠是信號」**：回授機制（LSP、CI、test）多數時候幫助，但有時是噪音；要主動過濾，不能照單全收（呼應 INSIGHT-5 的 context pollution 判斷）。
+
+### 對 workshop 的啟示
+- 這條是整個 insight 棧的**收尾**——「AI 給你所有能力之後，這四件事仍是你扛」。對學生是定錨：學會用 AI ≠ 甩掉工程責任。
+- 四個施力點都是**可教動作**：教 TDD-with-agent、教 human-in-loop 的判斷準則、教辨識 LSP 噪音、教 git 為何是聖旨。
+- 跟 INSIGHT-2 呼應：INSIGHT-2 說「把 LLM 當系統 debug」；INSIGHT-10 說「同時把你自己的工程紀律當系統維護」——人機各管各的系統。
+
+### 交叉引用
+- 呼應 INSIGHT-2（debug 系統）：人是維護自己工程紀律的系統。
+- 對比 `references.md` §13.4 Summer Yue：她正是 verification 責任交出去的案例。
+- 對比 `references.md` §7.4 podcast [31:13]：opencode 官方反激進 async、主張 human-in-loop；講者認同但加「看場合」的 nuance。
+- 對比 `references.md` §13.7 Hermes：Hermes 的 safer-by-default + approval/isolation 是把這條「責任不位移」制度化進工具——但講者仍強調 git 是聖旨（工具的安全機制是輔助，不是替代）。

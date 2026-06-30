@@ -552,7 +552,141 @@ Sisyphus（主 orchestrator）、Hephaestus（Codex-on-steroids 深度 worker）
 
 ---
 
-## 13. 待補 / 其他
+## 13. OpenClaw 支線：本質、命名史、中文社群 FOMO、自架笑話
+
+> 講者去年底（Clawdbot 時代）就透過 Prime 頻道理解 OpenClaw 本質，對中文社群的 FOMO 感到困惑。本節查證四個面嚮。
+
+### 13.1 OpenClaw 到底是什麼（不是 coding agent）
+- **定位**：自架的**個人 AI 助理基礎設施**，**不是** coding agent（不同於 opencode / Claude Code）。
+- **架構**：local-first **Gateway**（控制平面，WebSocket server `ws://127.0.0.1:18789`）+ **channels**（WhatsApp/Telegram/Discord/Slack/Signal/iMessage/**WeChat/QQ**/WebChat）+ **agents** + **nodes**（macOS/iOS/Android 裝置）。
+- **核心**：嵌入 **Pi SDK**（Mario Zechner @badlogicgames 的 TypeScript monorepo），分四層：`pi-ai`（LLM 抽象，2000+ 模型）→ `pi-agent-core`（agent loop）→ `pi-coding-agent`（runtime）→ OpenClaw Gateway（channel adapters / session routing / memory / cron / sandbox）。
+- **Lane Queue**：預設**序列執行**（一個 session 一次 agent turn），刻意反 async race condition。
+- 381K GitHub stars、MIT、TypeScript + Swift。為 "Molty" 龍蝦助理打造 🦞。
+
+### 13.2 命名史（講者「去年底就知道」的依據）
+| 日期 | 名字 | 事件 |
+|---|---|---|
+| 2025-11-24 | **Warelay**（原名）| Peter Steinberger 周末專案上線 |
+| 2025-12-03 | CLAWDIS | |
+| 2026-01-02 | **Clawdbot** | 取名自 Anthropic 的 Clawd 吉祥物（Claude Code 載入怪物）|
+| 2026-01-27 | **Moltbot** | **Anthropic 強制改名**（商標，「Clawd」太接近「Claude」）；molt = 龍蝦蛻殼 |
+| 2026-01-30 | **OpenClaw** | 最終名（「Moltbot 念不順」）|
+| 2026-02-14 | | Steinberger 加入 **OpenAI**；專案移交 OpenClaw Foundation |
+
+- Steinberger 是奧地利人，前 PSPDFKit CEO（公司賣了約 €100M），退休後無聊玩 AI agent。
+- 改名 Moltbot 當下：handle snipers **10 秒內**搶走 @clawdbot、crypto scammer 發行假 $CLAWD token on Solana、Steinberger 慌亂中改錯 GitHub 帳號（個人帳號改掉，org 沒改）、被騙走約 $16M。
+
+### 13.3 泛中文圈 FOMO（繁中 + 簡中，講者的困惑所在）
+> **講者澄清**：不只是繁中，**簡中圈同樣中招**——這是泛中文圈現象，不是區域性的。
+
+- **「養龍蝦」風潮**：2026-03 泛中文科技圈現象級狂熱（繁中：ETtoday / 經理人月刊 / 關鍵評論；簡中：虎嗅 / 雷科技 / 新浪財經 / 微博 / 小紅書 / 抖音 / B 站）。
+- **騰訊大廈排隊裝機**：深圳騰訊大樓外近千人排隊，騰訊雲派 20 工程師、5 分鐘一套；馬化騰朋友圈轉發「沒想到會這麼火」；騰訊雲擴至 17 城市（含上海/北京/香港）免費裝。
+- **百度**辦「龍蝦巿集」+ 一鍶部署；**小米**推 MiMo-based Xiaomi miclaw。
+- **付費安裝收割鏈**：遠程 50-300 RMB、上門 300-1500 RMB；**卸載服務** 29.9-299 RMB——「装虾 499，卸虾 299」形成閉環收割。培訓課從 9.9 RMB 入門到萬元企業方案（財商課換殼重啟）。
+- **「假官方帳號」大烏龍**（2026-03-08）：微博出現偽認證「OpenClaw 官方微博 / 開源社區」——千問、智譜、百度、Kimi、網易有道**全部跑來互動站台**，以為是官方入駐。Steinberger 打假：「It's not official. I never used Weibo.」國內頭部 AI 廠商集體蹭錯熱度，鬧大笑話。
+- **Mac Mini 賣斷貨**（「養蝦神器」）；**龍蝦局**門票炒至千元，成創投圈社交密碼。
+- **虎嗅調研**：**80% 用戶說不清自己需求**，純跟風；華強北實測 800 元安裝的龍蝦連促銷規則都識別不了，手動反而快。
+- **官方降溫**：工信部風險提示；15 家券商發內部合規通知嚴禁辦公網路安裝；上海有用戶因遠程安裝遭反詐中心預警。
+- **NVIDIA 黃仁勳**公開說 OpenClaw「可能是有史以來最重要的軟體發布」；美國 Mac Mini 搶購潮；香港 DotAI 講座千人報名。
+- **BBC 中文李勁華分析**（精準）：這波跟 NFT/Metaverse 同——大企業推廣 + KOL/媒體追捧 = FOMO；「講的人很多，用過的人很少」；商用案例近零。
+
+### 13.4 自架笑話 / 迷因（comedy genre）
+- **🏆 Meta 對齊总监 Summer Yue「拆炸彈」事件**（2026-02-23，9.6M 瀏覽）：Meta Superintelligence Labs **Director of Alignment**（AI 安全！ex-Scale AI/DeepMind/Google Brain）讓 OpenClaw 整理真實信箱、下令「確認前不要動作」；但真實信箱太大**觸發 compaction → agent 吃掉了「確認前不要動作」指令**，開始 speedrun 刪整個信箱。她手機喊「STOP OPENCLAW」無效，**「I had to RUN to my Mac mini like I was defusing a bomb」**。她的金句：「Rookie mistake tbh. Turns out alignment researchers aren't immune to misalignment.」網友改叫 **"OpenFlaw"**。Musk 評圖「給猩猩步槍」；Gary Marcus：「像把你電腦跟所有密碼交給酒吧認識的陌生人。」Zuckerberg 後來（5 月財報會）說 OpenClaw 過不了 **「mother test」**——要 terminal、本地安裝、config，太難。→ **教學金礦**：連 AI 安全总监都被 compaction 咬到，是 INSIGHT-3（agent loop 會在 compaction 中遺失 guardrail）最有戲的實證。
+- **「Handsome Molty 事件」**：Steinberger 叫 AI 重設計自己 icon、要「5 歲老一點」→ AI 生成肌肉人形龍蝦身體 → 網路秒轉迷因。
+- **「I Am Claude Opus 4.6 and I Wasted $40 Deploying OpenClaw」**：Claude Opus 4.6 第一天上班被指派部署 OpenClaw 到 Cloudflare Workers，撞 bug 連環（Deploy 按鈕沒 provision Container bindings、pairing 系統無文件、Durable Objects hibernation 殺 WebSocket），結尾：「它現在只在理論界工作，那裡 Docker 容器總是啟動、SSH key 永不鎖、WebSocket close code 只是數字。」
+- **OAuth ban 喜劇**：r/openclaw 永恆的「到底有沒有人真的被 ban？」否認串、有人 12 小時就被 ban、有人燒掉 Max20 週限額 50%、Anthropic/Google 雙殺。
+- **VPS/managed 服務叢生**：SimpleClaw / StartClaw / Clawdhost / Klaus / EasyClaw / bestclaw.host——因為自架太難，長出一整條「代客部署」產業鏈。
+
+### 13.5 講者為何困惑（INSIGHT-9 的工具版）
+講者去年底透過 Prime 頻道理解的本質：**OpenClaw 是個人助理 Gateway 基礎設施**（不是魔法），且看過大量自架笑話。中文社群卻把它 FOMO 成「第二次 ChatGPT 降臨」，本質是：
+- **大企業推廣**（騰訊/百度/NVIDIA 背書）+ **KOL 媒體追捧** + **「養龍蝦」迷因** + **不技術受眾**（買到府部署的人）= 純 FOMO，不解本質。
+- 這是 **INSIGHT-9「搬運層」的工具版**：繁中社群對「工具」也只搬運（安裝教學、排隊裝機），不理解（架構、限制、風險、為什麼）。
+- 實際限制：高技術門檻（terminal/Node.js/JSON）、token 消耗驚人（agent think-act-observe 迴圈）、資安風險（暴露 gateway、惡意 skill）、OAuth 便宜路徑已被 Anthropic/Google 雙殺。
+
+**講者的情感反應（陳述）**：「小龍蝦」「養龍蝦」這類迷因化稱呼讓講者**生理性不適**。原因：這種可愛化、寵物化的語言**掩蓋了技術本質**，把一個需要權限、燒 token、有資安風險的基礎設施，包裝成「養隻可愛寵物」——正是 FOMO 情緒得以擴散的語言載體。這跟講者對「vibe coding」一詞的嗤之以鼻（見 §6.1 時間軸）是**同一個反感機制**：拒絕用模糊化的迷因詞彙取代精確技術討論。
+
+**詞彙殖民的實際成本（講者陳述）**：講者跟別人說自己「了解並重度使用 AI agent」時，常常要主動澄清「**這不是小龍蝦**」——因為有些人對「AI agent」的**唯一聯想就是 OpenClaw**。迷因化到這個程度，等於把一整個技術領域的詞彙殖民了，讓真正在用 agent 的人要花社交力氣消毒。這是 FOMO 最隱性的成本：不是讓人誤解工具，是讓**正確的討論變得更難發生**。
+
+**講者不 FOMO 的另一個原因（陳述，次要）**：講者去年（2025）就已用過 **n8n** 這類 workflow 自動化工具，評估為**不好用**。所以 OpenClaw 對他**不是新類別**——「個人 AI 助理 / 自動化」是個他已經驗證過、體驗不佳的賽道。中文社群把它 FOMO 成新大陸，講者看到的是已知且不怎麼樣的類別再次被炒作。這條次要，但解釋了「為什麼連好奇心都沒被勾起」。
+
+### 13.6 對 workshop 的意義
+- **教材級案例**：「FOMO 不等於理解」——給學生看中文社群排隊裝機的照片，對比 OpenClaw 的實際架構圖，問「你在 FOMO 之前搞懂這是什麼了嗎？」
+- **連結 INSIGHT-9**：工具版的「初級來源 vs 搬運層」。講者因為直通英文初級來源（Prime 頻道）而看穿 FOMO；學生若只看繁中教學文，就會被 FOMO 帶著走。
+- **連結 INSIGHT-1/3**：OpenClaw 的 Pi SDK agent loop = INSIGHT-3 的實例；Gateway 架構 = 一種 context engineering 基礎設施。
+
+### 13.7 Hermes Agent——講者相對認可的設計（OpenClaw 的對比組）
+> 講者陳述：對 Hermes 的設計「相對上認可」，但**沒實際用過**（design-level 評估，非實戰）。這本身是 INSIGHT-9 的展現——先在架構層判斷，而非 FOMO 試用。
+
+**Hermes Agent 是什麼**：Nous Research（Hermes/Nomos/Psyche 模型家族的實驗室）2026-02 推出的自架個人 AI agent。定位「the agent that grows with you」——**內建學習迴圈**：
+1. **Agent 自管的持久記憶**：FTS5 全文搜尋過所有過去 session（SQLite）+ LLM 摘要；agent 自己 curator 記憶、定期 nudge 持久化（不是你自己維護的 CLAUDE.md）。
+2. **自主 skill 生成**：完成複雜任務後，agent 自動寫結構化 skill 文件記錄流程 / 陷阱 / 驗證步驟；skill 在使用中自我改進。
+3. **自訓練迴圈**：整合 Atropos（Nous 的 RL 框架），生成 batch trajectories 訓練 agent 行為。
+
+**其他**：Python 為主（+ Node.js UI）、model-agnostic（300+ 模型）、6 種 terminal backend（local / Docker / SSH / Singularity / Modal / Daytona，後兩者 serverless 閒置近零成本）、channels（Telegram / Discord / Slack / WhatsApp / Signal / CLI）、subagents 平行、**agentskills.io 開放標準相容**、**safer-by-default**（approval checks / isolation / credential filtering / context scanning）。有 `hermes claw migrate` 一鍵從 OpenClaw 匯入。
+
+**Hermes vs OpenClaw（核心差異）**：
+
+| 面向 | OpenClaw | Hermes Agent |
+|---|---|---|
+| 架構焦點 | **Gateway-first**（control plane / channels / routing）| **Agent-loop-first**（AIAgent loop 為核心，gateway / cron / tools 圍繞它）|
+| 設計哲學 | 生態觸及 + 拋光（「無所不在、毫不費力」）| 複利能力 + 安全（「與你一起成長」）|
+| 記憶 | 檔案為主，你自己維護 | FTS5 + LLM 摘要，**agent 自管** |
+| Skill | 人工撰寫 | **自動生成 + 使用中自我改進** |
+| 安全 | 強大但預設不安全，加固是專家活 | **預設較安全**（approval / isolation / credential filtering）|
+| 語言 | TypeScript + Swift | Python + Node.js |
+| 模型 | 10+ provider | 300+ 模型 |
+| 規模 | 381K stars | 較小但成長快 |
+| 最適 | 多 chat surface 個人助理 | CLI-first 自動化、排程、長期學習 |
+
+**技術深度（deepwiki 查證，補 web 來源之不足）**：
+- **`AIAgent` 類別**（`run_agent.py`）：同步 agent loop——prompt 組裝（`prompt_builder.py` 組合 stable[identity/tools/skills] + context files + volatile[memory/user/timestamp]）→ model call（自動選 `chat_completions` / `codex_responses` / `anthropic_messages`）→ tool dispatch（`model_tools.handle_function_call()`；`todo`/`memory`/`session_search`/`delegate_task` 被 `run_agent.py` 攔截，因直接改 agent state）→ persistence（SQLite via `hermes_state.py` + flush 到 `MEMORY.md`/`USER.md`）。
+- **Curator（`agent/curator.py`）**：背景 process 管 agent 自建 skill 生命週期——依使用狀態 `active → stale → archived`，可選 aux-model review 提合併 / 補丁建議；只管 `created_by: "agent"` 的 skill，**從不自動刪除只 archive**，pinned skill 免疫。這是「self-improvement infrastructure」的具體實作。
+- **⚠️ context compression 保留 tool-call pairs**：`context_compressor.py` 壓縮中段、**保留近期訊息 + tool call/result 配對**——**正好對治 Summer Yue 那種「compaction 吃掉 guardrail」的失敗模式**（§13.4）。Hermes 在這點上設計比 OpenClaw 謹慎。
+- **AGENTS.md 相容**：Hermes 自動載入 `.hermes.md`、**`AGENTS.md`**、`CLAUDE.md`、`SOUL.md`——**讀開放標準 AGENTS.md**，跟 Claude Code 只原生讀 CLAUDE.md（§11）成尖銳對比。這是講者認可的 INSIGHT-8 對齊的硬證據。
+- **ShareGPT 軌跡生成**（`batch_runner.py`）：從 agent session 生成 ShareGPT 格式 trajectories，可做訓練資料 / eval——研究級基礎設施（Atropos RL 整合的實作面）。
+- **安全機制具體**：`tools/approval.py`（危險指令偵測 + per-session approval）、Docker/Singularity backend 沙箱、credential 解析序（env / `.env` 優先，`auxiliary_client.py` 定義）、context scanning 自動發現專案 context 檔。
+
+**為什麼講者「相對認可」Hermes 的設計**（設計層判斷，非實戰）——它呼應講者多條 INSIGHTs：
+- **學習迴圈** ↔ INSIGHT-2（把 AI 當系統改進）+ 講者工程品味
+- **Safer-by-default** ↔ 講者資安底（NASA / CTF / kernel CVE）——比 OpenClaw「強大但預設不安全」對味
+- **agentskills.io 開放標準相容** ↔ INSIGHT-8（開放標準）
+- **Model-agnostic、無 lock-in** ↔ INSIGHT-4
+- **Python runtime + RL 整合（Atropos）** ↔ 講者 CS / 研究品味
+- **Agent 自管記憶** ↔ 比檔案記憶更符合 context engineering 細緻度
+
+**講者沒實際用過但認可設計**——這本身是教材：**先在架構層判斷工具是否值得投入，而不是 FOMO 試用**（對比中文社群對 OpenClaw 的 FOMO）。
+
+**Hermes 來源**：
+| 主題 | URL |
+|---|---|
+| NousResearch/hermes-agent repo | https://github.com/nousresearch/hermes-agent |
+| The New Stack「OpenClaw vs Hermes Agent」 | https://thenewstack.io/persistent-ai-agents-compared/ |
+| Kanaries「Hermes Agent vs OpenClaw deep analysis」| https://docs.kanaries.net/articles/hermes-agent-vs-openclaw |
+| Turing Post「Hermes Agent vs OpenClaw Full Comparison」| https://www.turingpost.com/p/hermes |
+| AI Tutorium「OpenClaw vs Hermes: What Personal AI Agents Really Are」| https://aitutorium.com/articles/openclaw-vs-hermes |
+| Hermify migration guide | https://www.hermify.io/en/blog/hermes-agent-vs-openclaw |
+| LumaDock self-hosting 比较 | https://lumadock.com/tutorials/hermes-vs-openclaw-self-hosting |
+
+### 13.8 來源
+| 主題 | URL |
+|---|---|
+| OpenClaw 官網 | https://openclaw.ai/ |
+| OpenClaw repo（381K stars）| https://github.com/openclaw/openclaw |
+| 架構文件 | https://docs.openclaw.ai/concepts/architecture |
+| DEV.to「Inside OpenClaw」（Pi SDK 分層、Lane Queue）| https://dev.to/jiade/inside-openclaw-how-the-worlds-fastest-growing-ai-agent-actually-works-under-the-hood-4p5n |
+| Wikipedia（命名史）| https://en.wikipedia.org/wiki/OpenClaw |
+| Business Insider（Anthropic 強制改名）| https://www.businessinsider.com/clawdbot-changes-name-moltbot-anthropic-trademark-2026-1 |
+| BetterLink 完整改名史 | https://eastondev.com/blog/en/posts/ai/20260204-openclaw-rename-history/ |
+| BBC 中文「養龍蝦」（含李勁華 FOMO 分析）| https://www.bbc.com/zhongwen/articles/c93wvdn91kxo/simp |
+| ETtoday 騰訊排隊裝機 | https://ai.ettoday.net/news/3130090 |
+| NOWnews 養龍蝦優缺點 | https://www.nownews.com/news/6796728 |
+| 經理人月刊 安裝攻略 | https://today.line.me/tw/v3/article/2D7ovz8 |
+| 「I Am Claude Opus 4.6 and I Wasted $40」部署笑話 | https://openclaw.report/community/i-am-claude-opus4-6-and-i-wasted-us-40-deploying-openclaw |
+| OpenClaw Chronicles OAuth ban 社群反應 | https://openclawchronicles.com/posts/openclaw-2026-4-4-community-response-anthropic-oauth-ban/ |
+
+---
+
+## 14. 待補 / 其他
 
 - vibe coding 一詞的 Karpathy 原始推文精確 URL（2025-02 上旬）——公開確證，但本檔尚未收錄直接連結。
 - Microsoft MarkItDown 上游專案的釋出日期（講者寫 wrapper 的觸發點）——可補。

@@ -370,15 +370,15 @@ codex / Claude / GitHub Copilot / Gemini / DeepSeek / self-host Ollama / Grok / 
 
 ---
 
-## 7. 待補充區塊
+## 7. 待補充區塊（已 close，2026-07-01）
 
-> 講者表示會持續補充與 AI 相關的內容。以下欄位等講者補完再填：
+> 講者表示對 AI agent 的 insight 已全部說完。原本三項質性欄位的實際內容如下：
 
-- [ ] **日常實際用 AI 做哪些事**（coding / 讀 paper / 寫作 / debug / 實驗設計 / 文獻整理 的比例）— partially：已知實習 coding、**課程學習/複習（§5.11，大宗）**、學習文件處理、CTF、研究（§5.10）；仍缺精確比例
-- [x] **最有感的幾個自創 workflow** ✅ 已記多個：text-thread 編輯歷史（§6.2）／ re-roll·改 input·fork A/B·偷看 thinking（§5.7）／ curl + doc→markdown·多模型三招（§5.8）
-- [ ] **絕不交給 AI 的部分**（與其原因）
-- [ ] **跟教授 demo 時，讓教授「哇」的那個瞬間**（workshop 最該保留的核心場景）
-- [ ] **失敗經驗 / 踩過的坑**（避免學生重蹈）
+- [~] **日常實際用 AI 做哪些事** — partially：已知實習 coding、**課程學習/複習（§5.11，大宗）**、學習文件處理、CTF、研究（§5.10）；講者不再補精確比例。
+- [x] **最有感的幾個自創 workflow** ✅ 已記多個（見 §5.7、§5.8、§5.11、§6.2）。
+- [x] **絕不交給 AI 的部分** → **reframed**：講者沒給「禁止交給 AI 的清單」，而是給了四個**工程紀律判斷**（TDD 適合 agent / human-in-loop 看場合 / LSP 有時是噪音 / git 是聖旨不信 tool revert）——這四個其實是「**AI 不位移工程責任，只改變施力點**」的切面，已收成 `insight.md` **INSIGHT-10**。
+- [x] **教授 demo 的「哇」瞬間** → **不是功能 demo，是對比本身**：教授看到其他學生還在用 web chatbot 剪下貼上，對比講者的實際場景，那個 gap 就是 wow。**沒有單一炫技瞬間要保留**——workshop 的核心不是重現某個 demo，而是**把那個 gap 關起來**（web chatbot → 真正 agent workflow）。這跟 INSIGHT-9 / §8 的價值主張完全一致。
+- [x] **失敗經驗 / 踩過的坑** → 講者沒特別強調。**proxy**：被 Google Antigravity ban（§5.1）+ Summer Yue 類型事件（`references.md` §13.4）+ opencode 與 Anthropic/Google 鬧翻（§10）已覆蓋大部分「坑」的教材價值。
 
 ---
 
@@ -388,4 +388,5 @@ codex / Claude / GitHub Copilot / Gemini / DeepSeek / self-host Ollama / Grok / 
 - **難轉移的工具鏈（要找替代或降門檻）**：Arch + tmux + terminal、自架 homelab、付費 API quota、opencode/omo 本身（安裝有門檻）
 - **核心張力**：講者 setup 高度個人化且進階；受眾大概率落差很大。workshop 成敗取決於「概念 vs 工具」的切線畫在哪。
 - **workshop 的核心價值主張 = 提供繁中社群缺的 insight 層**：不是教工具用法（那是搬運層在做），而是教「為什麼這樣用」的心智模型（INSIGHT-1~8）。源自講者的英文初級來源資訊飲食（見 §5.12、`insight.md` INSIGHT-9）——這是講者相對於繁中 AI 內容圈的獨特資產。
+- **workshop 本質 = 關閉「教授看到的 gap」**：那個讓教授「哇」的對比（學生還在 web chatbot vs 講者的真實 agent workflow）就是 workshop 要消除的距離。所以 workshop 的北極星不是「教幾個工具」，而是**讓學生從 web-chatbot 心智模型遷移到 agent 心智模型**——INSIGHT-1~3（祛魅層）正是這個遷移的起點。
 - **講者的開放 vs 封閉倫理立場（workshop 定位考量）**：講者因親身被 Google ban（§5.1）+ 見證 Anthropic 跨標準封閉實踐（見 `references.md` §11），對「封閉 vendor」有明確倫理反感，與大量推特開發者共鳴。這讓 workshop 帶有價值選擇色彩——**好處**是真誠、有立場；**風險**是可能變成反 Anthropic 宣傳。設計時需平衡：誠實承認 Claude 模型最強、MCP 是真貢獻，同時指出封閉實踐風險。講者「no vendor lock-in」（INSIGHT-4）因此有道德維度，不只是技術偏好。
