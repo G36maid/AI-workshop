@@ -8,7 +8,7 @@
 
 ## 議程（at a glance）
 
-> 這整張講稿是我當天開著念、也給台下看的同一份。粗體段落是「不可壓縮」的核心；其他可依現場節奏伸縮。
+> 這整張講稿是我當天開著念、也給台下看的同一份。
 
 ### 上半場（早上）：pure opencode
 
@@ -17,7 +17,7 @@
 | Block 1：自我介紹 | 10-15 min | INSIGHT-9（誠實定位）|
 | Block 2：祛魅 — AI / Agent 到底是什麼 + Mini Agent 現場實作 + 實驗 | 60-90 min | INSIGHT-1, 2, 3 |
 | Block 3：環境配置 + First run | 30-40 min | INSIGHT-3, 8 |
-| 主場 Block A：MCP 是什麼、直接配起來、設計兩典範 | 40-60 min | INSIGHT-5 |
+| 主場 Block A：MCP 是什麼、直接配起來、兩種不同的設計思路 | 40-60 min | INSIGHT-5 |
 | 主場 Block B：SKILL 是什麼 + 手搓一個 | 20-30 min | — |
 | **主場 Block C：鎮館之寶 — 多模型編排 + live config show-and-tell** | **40-50 min** | **INSIGHT-4** |
 | **主場 Block D：自建 context 語料庫 + AGENTS.md 深講** | **30-40 min** | **INSIGHT-7, 8** |
@@ -44,210 +44,262 @@
 |---|---|---|
 | INSIGHT-9 + INSIGHT-10 | 20 min | 9, 10 |
 
-> 講者備註：上述時間是給自己的錨，不是給學員的承諾。實際節奏由現場火候決定——哪段大家有反應就多講，哪段卡住就壓縮後面。
+> 講者備註：上述時間僅供參考
 
 ---
 
-## 這個 workshop 不是什麼 / 是什麼
+## 這個 Workshop 不是什麼 / 是什麼
 
-**不是**：工具教學（那是搬運層在做的事）、不是教你怎麼么按 Cursor、不是「養龍蝦」。
+**不是**：單純的工具教學（那是搬運工才做的事）、不是教你怎麼操作 Cursor，更不是教你「養龍蝦」。
 
-**是**：一次**心智模型遷移**。你們現在多半把 ChatGPT 當答案來源——剪下貼上。我要帶你看到的是：LLM 是一個 I/O 黑盒子，agent 就是繞著它的一个 loop，而你完全可以控制餵進去的 input。
+**是**：一次**心智模型遷移**。很多人只把 ChatGPT 當作解答機——複製答案後貼上到 IDE。但我想帶大家看到的是：LLM 本質上是一個 I/O 黑盒子，而 Agent 就是圍繞著它運作的一個 loop。你完全可以控制餵進去的 input，我們要思考的是如何真正善用這些工具，來完成人類需要的任務，進而大幅加速我們的開發與研究。
 
-**誠實定位**：我直接把英文圈的 insight 用中文講給你聽，省你爬源頭的時間。我想講我想講的——這是演講者驅動場，不是分層服務。你能吸收到哪層是哪層。
+**定位**：今天我會分享自己的心路歷程，把英文圈的精華 insight 消化後直接講給你聽，幫你省下去爬原文的時間。此外，我也會隨性聊聊一些我自己想分享的觀察。
 
 ---
 
 # 上半場（早上）：pure opencode
 
-整個早上我們在 **opencode**（開源 coding agent）裡面跑。這是我日常 driver 場景。
+整個早上，我們都會在 **OpenCode**（一款開源的 Coding Agent）裡面跑。這也是我平常開發的 Daily Driver（主力工具）。
+你可以把它想像成是開源版的 Claude Code。
+
+🔗 https://opencode.ai/
+
+### 什麼是 OpenCode？
+
+OpenCode 是一個開源的 AI Agent，能協助你在終端機 (Terminal)、IDE 或是桌面應用程式中編寫程式碼。
+
+**核心特色：**
+*   **支援 LSP**：能為 LLM 自動載入合適的 LSP (Language Server Protocol)。
+*   **多工作階段 (Multi-session)**：允許在同一個專案中，平行啟動多個 Agent 處理不同任務。
+*   **分享連結**：能將任意工作階段生成連結，分享給其他人參考或協助 Debug。
+*   **整合 GitHub Copilot**：可透過 GitHub 登入，直接連接並使用你的 Copilot 帳號。
+*   **整合 ChatGPT Plus/Pro**：可透過 OpenAI 登入，直接使用你的 ChatGPT Plus/Pro 帳號。
+*   **支援任意模型**：透過 Models.dev 介接超過 75 家 LLM 供應商，也支援串接 Local（本地端）模型。
+*   **支援任意環境**：提供終端機介面、桌面版 App，以及 IDE 擴充套件等多種使用形式。
+
+📚 官方文件：https://opencode.ai/docs/
 
 ---
 
 ## Block 1：自我介紹（10-15 min）
 
-### 我是誰
+### 關於我 (Who am I)
 
-- **LLM 土著**：2022-11 ChatGPT 公開時我大一，幾乎同步開始用。不是後來跟風。
-- **Zed Guild Contributor**：我不只用工具，我造工具給這個生態——我寫的 `zed-mcp-server-markitdown` 在 Zed 商店有近 3 萬下載。
-- **系統工程 / 資安 / 開源**偏好：Arch Linux、Rust、CTF、homelab。我看待 AI 的方式，跟我看待 kernel 的方式一樣。
+🔗 GitHub: https://github.com/G36maid
 
-### Credibility framing
+我熱衷於系統工程與資安領域的研發，並活躍於開源社群。我是 **Zed** (Rust-based Editor) 的 Contributor，同時也是 Zed Guild Bug Bashers 的成員，曾為 Zed 與 OpenCode 貢獻過程式碼。
 
-我不是教授，是**同儕裡走比較遠的那個**。深度是權威來源，不是頭銜。
+*   **開源里程碑**：我開發的 [`zed-mcp-server-markitdown`](https://zed.dev/extensions?filter=context-servers) 在 Zed 擴充商店已累積近 3 萬次下載。
+*   **技術守備範圍**：日常使用 Arch Linux、熱愛 Rust、有在打 CTF，也是個 Homelab 玩家。
+*   **我的 AI 哲學**：我看待 AI 的方式，就和我看待 OS Kernel 的方式一樣。
 
-### 一句話 hook
+let's all love lain." 
+Arch user, 
+homelab host, 
+Rust enthusiast. 
+CS / ME @NTNU  
+- building systems, breaking illusions
 
-> 「你們有人用過把 ChatGPT/Claude/Gemini 訂閱接進其他工具的 plugin 嗎？——我被 ban 過。」
+https://github.com/G36maid 
 
-（完整故事留到後面 **主場 Block C（INSIGHT-4）** 重講。這裡只建立「這人玩真的、會燙到」的份量。）
+### 🍟 開胃菜
+
+> 「你們有人把 ChatGPT / Claude / Gemini 的訂閱，接進去其他工具的 Plugin 使用過嗎？」
+
+你們有想過，要如何用**最少、最低的成本**打完一場 CTF 嗎？
+或者是，嘗試將一整個學期的魔王課程，甚至是公司累積的 Jira Tickets，**全部外包給 AI 處理，而且還能做得盡善盡美？**
+
+如果你覺得這還不夠瘋狂，那有沒有試過：
+*   **【架構理解】**：面對一個萬行起跳的未知開源專案，在己分鐘內讓 Agent 幫你摸透底層邏輯，並直接畫出系統架構圖？
+*   **【基礎設施】**：丟一張隨手說的架構草圖，讓 AI 直接幫你寫完所有 Docker Compose 或 Kubernetes 的設定檔，一鍵部署到你的 Homelab？
+*   **【資安與逆向】**：打 CTF 時，把一顆完全看不懂的 Binary 丟進去，讓 Agent 幫你做逆向分析，甚至連 Pwntools 的 Exploit Script 都順手幫你寫好？
+*   **【程式碼重構】**：面對一坨公司的祖傳 Legacy Code，讓 Agent 像外科醫生一樣，精準地把這坨義大利麵重構成安全的程式碼？
+
+這就是我們今天要聊的：**當你把 LLM 裝上「手腳」變成 Agent 後，它能做到的極限在哪裡。**
+
 
 ---
 
 ## Block 2：祛魅 —— AI / Agent 到底是什麼（60-90 min）
 
-這段是整個上午的智識重心。三個 insight 是心智模型遷移的階梯：**一旦你看穿 agent 不是魔法，opencode 就只是「一個刻得好的 loop」**。
+這段是整個上午的知識核心。接下來的三個 Insight，將是完成「心智模型遷移」的階梯：**一旦你看穿 Agent 根本不是魔法，就會發現 OpenCode 說穿了，就只是一個「刻得很好的 Loop」而已。**
 
 ---
 
-### INSIGHT-1：LLM 本質是 I/O 黑盒子
+### INSIGHT-1：LLM 本質上就是個 I/O 黑盒子
 
-不管外包裝成 chatbot、agent、orchestrator，**LLM 就是根據 input 吐 output 的機器**。跟最陽春的 web chatbot **沒有本質差別**。
+不管外面包裝成 Chatbot、Agent，**LLM 說到底就是一台根據 Input 吐出 Output 的機器**。這跟最陽春的 Web Chatbot **在最底層沒有任何本質上的差別**。
 
-**改善 output 只有兩根槓桿**：
-1. **改善 input（context）** ← 這是今天 80% 的內容
-2. **換更強的模型**
+**要改善 Output 的品質，你手上只有兩根槓桿**：
+1. **改善 Input（也就是 Context，上下文）** ← 這是今天 80% 的重點。
+2. **換一個更強的模型**。
 
-其餘所有花俏東西（prompt 模板、RAG、MCP、skill、orchestrator、delegation⋯⋯）**全部都只是「改善 input」的不同實作**。
+市面上其餘所有花俏的名詞與技術（例如 Prompt、RAG、MCP、Skills、LOOP、HOOK⋯⋯），**全部都只是用來「改善 Input/O」的不同實作方式而已**。
 
-**這條拆穿什麼**：
-- 「AI 是魔法」→ 沒有魔法，就是 I/O
-- 「vibe coding」（只按 Enter、不塑造 input）→ 等於把輸出完全交給模型當下的隨機性
-- 「換工具就會變強」→ 常常只是換一種包裝 context 的方式
+**這個觀念能幫我們打破什麼迷思？**
+*   **「AI 是魔法」** → 根本沒有魔法，純粹就是 I/O。
+*   **「Vibe Coding」**（無腦按 Enter，不去塑造 Input） → 這等於是把產出的品質，完全交給模型當下的隨機性來決定，但我們可以改善他。
+*   **「換個工具就會變強」** → 很多時候，新工具只是換了一種「包裝 Context 的方法」而已。
 
-**live demo**：同模型、不同 input → output 天差地別（我從 text-thread 時代就靠這個理解 context 的）。
-
----
-
-### INSIGHT-2：把 LLM 當系統 debug
-
-LLM 是黑盒子，但黑盒子不是不能研究——**任何工程師面對黑盒子，用的就是同一套經驗方法**。把 LLM 當系統 debug，而不是當神諭問，是「會用」與「不會用」的分水嶺。
-
-**四個 debug 手法**（都是你已經會的工程技巧）：
-
-| 手法 | 工程對應 | 在 LLM 上的意義 |
-|---|---|---|
-| **重新 roll 一次** | 重跑測試 | 探索 output 分佈——答案是穩健還是運氣好？|
-| **改 input + re-roll** | 改參數重跑 | INSIGHT-1 的主迴圈：迭代塑造 context |
-| **Fork chat / 雙 thread A/B** | 受控實驗 | 只動一個維度，比較 output → isolate 哪個 input 因子有效 |
-| **偷看 thinking process** | 看 stack trace | 部分打開黑盒子，看推理鏈是否走偏 |
-
-**全班實驗**：同一題，大家一起 re-roll → 親眼看見變異。一次 output 只是分佈裡的一個樣本，不是「模型的答案」。
-
-**這條拆穿什麼**：你不必懂 RAG / 向量資料庫才能研究 LLM。git + markdown + 任何會讀檔的 agent，就是最直接的實驗台。
+**💻 Live Demo**：
+等等我會現場展示：同一個模型，在不同 Input 下，Output 會如何天差地別（我從早期的 Zed Text-thread 時代，就是靠這招來徹底搞懂 Context 運作原理的）。
 
 ---
 
-### INSIGHT-3：Agent 就是一個 loop
+### INSIGHT-2：把 LLM 當作系統來 Debug
 
-> 這條的出處：**Adam 在 ThePrimeagen Standup podcast [04:32] 定義「Agent = LLM + Tools + Loops」**——我從這裡吸收這個心智模型。
+LLM 雖然是個黑盒子，但不代表我們不能研究它——**工程師面對任何未知的黑盒子，用的其實都是同一套經驗與方法**。把 LLM 當作系統來 Debug，而不是把它當成「神諭」來求神問卜。
 
-所謂「AI agent」不是新東西，**就是一個迴圈**：
+**四個 Debug 手法**（其實都是你日常開發早就在用的技巧）：
 
-```
-1. 給 LLM 一個 system prompt + 工具定義（read / write / edit / bash 等）
-2. LLM 吐 output
-3. 若 output 符合某工具的呼叫格式 → 執行該工具，結果回灌進 context
-4. 重新送一次 input 給 LLM
-5. 重複，直到 LLM 自己決定停止
-```
+| LLM 操作手法 | 對應的工程概念 | 在 LLM 上的實質意義 |
+| :--- | :--- | :--- |
+| **重新 Roll 一次 (Re-generate)** | 重新跑一次測試 | 探索 Output 的機率分佈——這個答案是真正穩健，還是剛好運氣好？ |
+| **修改 Input + Re-roll** | 調整參數後重跑 | 呼應 INSIGHT-1 的主迴圈：不斷迭代並塑造更好的 Context。 |
+| **Fork 對話 / 雙 Thread A/B 測試** | 進行受控實驗 | 每次只變動一個維度並比較 Output，藉此釐清究竟是哪個 Input 因子發揮了作用。 |
+| **偷看 Thinking Process (思考過程)** | 查閱 Stack Trace | 稍微打開黑盒子，檢查它的推理鏈 (Reasoning Chain) 在哪一步走偏了。 |
 
-**整個「agentic」魔法，就是這五行 while loop。**
+**實驗**：
+用同一道題目，讓大家一起 Re-roll，親眼見證結果的差異。模型單次給出的 Output，永遠只是機率分佈裡的「其中一個樣本」，有時候多抽幾次，才能找到我們真正需要的答案。
 
-**這條拆穿什麼**：
-- 「agent 是新型 AI」→ agent = LLM + while loop + 工具。LLM 還是那個 I/O 黑盒子。
-- 「agent 會自主思考」→ 它沒有「想」，每次迴圈都還是「給 input、吐 output」。
-- 「agent 框架很神祕」→ Claude Code、Cursor agent、Zed agent、opencode、Cline⋯⋯**底層全都是這個 loop 的不同實作**。
+---
+
+這段內容是整個 Workshop 最具震撼力的高潮！透過實際展現一段簡單的程式碼來打破迷思（祛魅），非常有說服力。
+
+我幫你增強了講述時的「戲劇張力」與「工程師直覺」，把程式碼的註解稍微對齊，並優化了表格與實驗段落的敘述，讓台下的聽眾能更順暢地跟著你的邏輯走。
+
+```markdown
+### INSIGHT-3：Agent 說穿了就是一個 Loop
+
+> 💡 **觀念出處**：這段源自 Adam 在 ThePrimeagen Standup Podcast [04:32] 中的定義：「Agent = LLM + Tools + Loops」。這也是我建構這個心智模型的起點。
+
+所謂的「AI Agent」根本不是什麼神祕的新科技，**它本質上就是一個迴圈 (Loop)**：
+
+1. 給 LLM 一組 System Prompt 與工具定義（如 Read / Write / Edit / Bash 等）。
+2. LLM 根據 Input 吐出 Output。
+3. 若 Output 符合呼叫工具的格式 → 執行該工具，並將執行結果回灌到 Context 中。
+4. 將更新後的 Context 再次送給 LLM。
+5. 不斷重複，直到 LLM 判斷任務完成並自己決定停止。
+
+**所謂的「Agentic 魔法」，說穿了就只是這五行 `while loop`。**
+
+* **「Agent 是某種新型態的 AI」** → 錯，Agent = LLM + While Loop + Tools，核心依舊是那個 I/O 黑盒子。
+* **「Agent 具備自主思考能力」** → 它並沒有真的在「想」，每一次的迴圈依然是死板的「給 Input、吐 Output」。
+* **「各家 Agent 框架都很神祕高深」** → 無論是 Claude Code、Cursor Agent、Gemini CLI、Zed Agent、OpenCode 還是 Cline⋯⋯**底層全都是這個 Loop 的不同實作而已**。
 
 ---
 
 ### 🛠️ Mini Agent 現場實作（Block 2 重頭戲）
 
-我現在從零寫一個 mini agent 給你看。**不到 200 行**。結構：
+我現在直接從零刻一個 Mini Agent 給你看。**不到 200 行程式碼**，核心結構大概長這樣：
 
 ```python
-# 結構骨架（實際程式碼預先準備，現場邊貼邊講）
-
-system_prompt = load("AGENTS.md")          # ← 預告 INSIGHT-8：AGENTS.md = system prompt
-tools = [read, write, edit, bash]           # ← 預告 INSIGHT-5：這些是「內建工具」，MCP 是擴充來源
-model = config["model"]                     # ← config-driven，可切換（實驗段落要用）
+system_prompt = load("AGENTS.md")            # ← 預告 INSIGHT-8：AGENTS.md 就是 System Prompt
+tools = [read, write, edit, bash]            # ← 預告 INSIGHT-5：這些是「內建工具」，MCP 則是擴充來源
+model = config["model"]                      # ← Config-driven，可隨時切換（稍後實驗段落會用到）
 
 messages = [{"role": "system", "content": system_prompt}]
 messages.append({"role": "user", "content": user_task})
 
-while True:                                 # ← INSIGHT-3 本體：agent 就是這個 loop
+while True:                                  # ← INSIGHT-3 本體：Agent 就是這個 Loop
     response = llm_call(model, messages, tools)
     messages.append(response)
 
     if response.has_tool_call():
         result = execute_tool(response.tool_call)   # 執行工具
-        messages.append(tool_result(result))         # 結果回灌 context
+        messages.append(tool_result(result))        # 將結果回灌至 Context
     else:
-        break                                # LLM 自己決定停止
+        break                                       # LLM 判斷結束，自行停止
+
 ```
 
-**這個 build 同時示範多條 insight**：
-- INSIGHT-1：loop 裡的 LLM call 就是 I/O 黑盒子
-- INSIGHT-3：loop 結構
-- INSIGHT-4 預告：`config["model"]` 可切換——暗示同一個 loop，不同 model = 不同 box（主場 Block C 重講）
-- INSIGHT-8 預告：`AGENTS.md` = system prompt
-- INSIGHT-5 預告：`read/write/edit/bash` 是工具，MCP 是擴充來源
+**這段簡單的 Code，同時展示了我們今天談到的多個 Insight**：
 
-**build 完後**，我指著 opencode 說：「**它就是這個，只是工具更多、context 管理更精細、加上生產級 polish**。」——你親眼看過原型，opencode 從此不是魔法。
+* **INSIGHT-1**：Loop 裡的 `llm_call` 依然是那個單純的 I/O 黑盒子。
+* **INSIGHT-3**：Agent 的核心 Loop 結構。
+* **INSIGHT-4 (預告)**：`config["model"]` 是可以切換的——暗示同一個 Loop，裝上不同的 Model 就等於換了個大腦（這會在主場 Block C 深入探討）。
+* **INSIGHT-8 (預告)**：`AGENTS.md` 在系統中的定位就是 System Prompt。
+* **INSIGHT-5 (預告)**：`read/write/edit/bash` 是基本工具，而 MCP 將是未來擴充工具的來源。
+
+**Demo 結束後**，我會指著 OpenCode 告訴大家：「**OpenCode 其實就是這個東西。它只是內建了更多工具、把 Context 管理做得更精細，並加上了 Production-ready 的打磨而已。**」——當你親眼看透了原型，OpenCode 對你來說就不再是魔法了。
 
 ---
 
 ### 🧪 Mini Agent 實驗段落（互動）
 
-build 完不是結束——同一個 mini agent 立刻當實驗台：
+寫完 Agent 不是重點，接下來我們直接把這支 Mini Agent 當作實驗台：
 
-| 實驗 | 做法 | 看見什麼 |
-|---|---|---|
-| **有/無 AGENTS.md** | 同一任務，先沒 AGENTS.md 跑一次，加上再跑一次 | agent 行為天差地別——**寫不寫 AGENTS.md，表現差很多**當場被驗證 |
-| **各家 model 對照** | 同一 agent + 同一 AGENTS.md，換 Go 的不同模型跑同一任務 | 同一個 loop、不同模型 → 品質/風格/能力落差一目了然——同時預告主場 Block C 的多模型編排 |
+| 實驗目標 | 測試做法 | 我們會看見什麼？ |
+| --- | --- | --- |
+| **AGENTS.md 的威力** | 同一個任務，先在「沒有」AGENTS.md 的情況下跑一次，加上後再跑一次。 | Agent 的行為天差地別——當場驗證**寫不寫 AGENTS.md，表現真的差很多**。 |
+| **各家 Model 大亂鬥** | 同一個 Agent + 同一份 AGENTS.md，抽換成不同的 LLM 去跑同一個任務。 | 同一個 Loop，換不同模型 → 品質、風格、能力落差一目了然，同時也為 Block C 的「多模型編排」埋下伏筆。 |
 
-**為什麼這組實驗強**：都是「同 agent、變一個維度、比 output」——這正是 INSIGHT-2 的受控實驗手法，你邊玩邊內化。
+**為什麼要做這組實驗？**
+因為這完美示範了「同一個 Agent、只改變一個維度、比較 Output 差異」的過程。這正是我們在 INSIGHT-2 提到的實驗手法，讓你在實作中直接內化這個 Debug 心法。
 
----
 
 ## Block 3：環境配置（30-40 min）
 
-接下來讓每個人跑起來。
+接下來的環節，我們要把環境架起來，確保大家都能在自己的電腦上實際跑動 Agent。
 
-### opencode 安裝
+### 1. 安裝 OpenCode
 
 ```bash
-# macOS / Linux
+# YOLO
 curl -fsSL https://opencode.ai/install | bash
 
-# 講者自己用 Arch pacman；跨平台指令見 opencode.ai/docs
-# Windows 用戶：見官方 docs 的 Windows 安裝路徑
+# Package managers
+npm i -g opencode-ai@latest        # or bun/pnpm/yarn
+scoop install opencode             # Windows
+choco install opencode             # Windows
+brew install anomalyco/tap/opencode # macOS and Linux (recommended, always up to date)
+brew install opencode              # macOS and Linux (official brew formula, updated less)
+sudo pacman -S opencode            # Arch Linux (Stable)
+paru -S opencode-bin               # Arch Linux (Latest from AUR)
+mise use -g opencode               # Any OS
+nix run nixpkgs#opencode           # or github:anomalyco/opencode for latest dev branch
 ```
 
-### opencode Go 訂閱（$5 首月，整天夠用）
+---
 
-**為什麼選 Go**：低門檻、14 個強開源模型一把抓、額度對整天 workshop 綽綽有餘、零資料留存。
+### 2. 訂閱 OpenCode Go（首月 $5，夠跑一整天）
 
-| 項目 | 內容 |
-|---|---|
-| 月費 | **$5 首月**，之後 $10/月 |
-| 5 小時上限 | $12 等同用量（對單一 session 綽綽有餘）|
-| 週上限 | $30 等同用量 |
-| 月上限 | $60 等同用量 |
-| 伺服器 | US / EU / Singapore |
-| 資料政策 | **zero data retention** |
-| 取消政策 | 隨時取消；額度不夠可加值 |
+**為什麼推薦用 OpenCode Go 方案？**
+因為門檻低、直接打包 14 款強大的開源模型、給的額度用來打滿一整天的 Workshop 綽綽有餘。
 
-**收錄模型（14 個）**：
+**📊 方案細節：**
 
-| 模型 | 定位 |
-|---|---|
-| **GLM-5.2** | 講者日常 driver，本 session 跑這個 |
-| GLM-5.1 | Hades 專題用（Opus-level 開源）|
-| Kimi K2.7 Code | 程式特化 |
-| Kimi K2.6 | Moonshot 旗艦 |
-| MiMo-V2.5 / V2.5-Pro | 小米；V2.5 最便宜 |
-| MiniMax M3 / M2.7 | agentic 工作馬 |
-| Qwen3.7 Max / Plus、Qwen3.6 Plus | Alibaba 高階 |
-| DeepSeek V4 Pro / Flash | 長 context 強 / 高 throughput |
+| 項目 | 內容說明 |
+| --- | --- |
+| **月費** | **首月 $5 USD**（之後 $10/月） |
+| **5 小時上限** | 等同 $12 USD 的用量（對單一 Session 來說非常夠用） |
+| **每週上限** | 等同 $30 USD 的用量 |
+| **每月上限** | 等同 $60 USD 的用量 |
+| **伺服器節點** | 美國 (US) / 歐洲 (EU) / 新加坡 (Singapore) |
+| **隱私政策** | **Zero Data Retention（零資料留存）** |
+| **取消與加值** | 可隨時取消；若額度打乾了也可以隨時手動加值 |
 
-**caveat**：「Only one member per workspace can subscribe」——實驗室共用 workspace 要注意，每人各自註冊帳號就沒問題。
+---
 
-### 套用 Pure Go Config
+### 3. 運作方式與連線流程
 
-我準備了一份 **pure Go config**（只路由到 opencode-go provider，不會燒到昂貴 frontier 模型）——這是**成本安全邊界**：無論你怎麼 hammer，最大燒掉就是 Go 額度（$12/5h、$30/週、$60/月）。
+OpenCode Go 的運作邏輯，就跟你在 OpenCode 裡串接任何其他 LLM 供應商一樣簡單：
 
-> **為什麼必要**：講者日常 config 是 4 provider 混合（會路由到 GPT/Gemini 等級，output 可達 $15-30/1M tokens）——學生現場燒這種等級的 token 是不可控的。Pure Go config 把上限鎖死在 Go 額度。**這個 pattern 本身就是主場 Block C 要講的「成本安全邊界」思想的前哨**。
+1. **取得金鑰**：登入 OpenCode Zen 平台，訂閱 Go 方案，然後複製你的 API Key。
+2. **終端機連線**：在你的 TUI (終端機介面) 中輸入 `/connect` 指令。
+3. **貼上金鑰**：選擇 `OpenCode Go`，接著貼上剛剛複製的 API Key。
+4. **確認模型**：在 TUI 中輸入 `/models`，就能看到所有透過 Go 方案解鎖的模型清單。
+
+**Go 方案收錄的 14 款模型陣容：**
+
+* GLM-5.1 / GLM-5.2
+* Kimi K2.6 / Kimi K2.7 Code
+* MiMo-V2.5 / MiMo-V2.5-Pro
+* MiniMax M2.7 / MiniMax M3
+* Qwen3.6 Plus / Qwen3.7 Plus / Qwen3.7 Max
+* DeepSeek V4 Flash / DeepSeek V4 Pro
+
 
 ### 基本指令
 
@@ -257,9 +309,8 @@ curl -fsSL https://opencode.ai/install | bash
 | `/compact` | 壓縮對話 context | 對話太長時搶救——context 是有限資源 |
 | `/session` | session 管理（list / resume / **fork**）| 呼應 INSIGHT-2 的 fork A/B |
 | `/models` | 切換模型 | mini agent 的 model-swap 實驗，現在換你操作 |
-| 其他 slash commands | 待補 / 依 opencode docs 當場查 | 只教會用到的，不全部塞 |
+| 其他 slash commands | 直接在 opencode 裡面看 | 自己去玩～|
 
-**/session fork 是 INSIGHT-2 的肌肉記憶**：把 fork chat / A/B 從講者 debug 技巧變成學生操作肌肉記憶——session 就是可 fork 的實驗單位。
 
 ### First run
 
