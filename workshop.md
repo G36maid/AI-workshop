@@ -1,9 +1,5 @@
 # AI Agent Workshop — 從 web chatbot 到 agent 心智模型
 
-> **講者**：G36maid（NTNU CS/ME 大四）
-> **形式**：整天 workshop，9am ~ 下午，約 3-6 小時
-> **核心**：帶你從 web-chatbot 心智模型，遷移到 agent 心智模型。
-
 ---
 
 ## 議程（at a glance）
