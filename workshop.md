@@ -1,4 +1,4 @@
-# AI Agent Workshop — 從 web chatbot 到 agent 心智模型
+# AI Agent Workshop — 從 web chatbot 到 agentic workflow
 
 ---
 
