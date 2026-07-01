@@ -63,7 +63,7 @@
 整個早上，我們都會在 **OpenCode**（一款開源的 Coding Agent）裡面跑。這也是我平常開發的 Daily Driver（主力工具）。
 你可以把它想像成是開源版的 Claude Code。
 
-🔗 https://opencode.ai/
+🔗 [OpenCode 首頁](https://opencode.ai/)
 
 ### 什麼是 OpenCode？
 
@@ -78,7 +78,7 @@ OpenCode 是一個開源的 AI Agent，能協助你在終端機 (Terminal)、IDE
 *   **支援任意模型**：透過 Models.dev 介接超過 75 家 LLM 供應商，也支援串接 Local（本地端）模型。
 *   **支援任意環境**：提供終端機介面、桌面版 App，以及 IDE 擴充套件等多種使用形式。
 
-📚 官方文件：https://opencode.ai/docs/
+📚 官方文件：[OpenCode Docs](https://opencode.ai/docs/)
 
 ---
 
@@ -86,7 +86,7 @@ OpenCode 是一個開源的 AI Agent，能協助你在終端機 (Terminal)、IDE
 
 ### 關於我 (Who am I)
 
-🔗 GitHub: https://github.com/G36maid
+🔗 GitHub: [G36maid](https://github.com/G36maid)
 
 我熱衷於系統工程與資安領域的研發，並活躍於開源社群。我是 **Zed** (Rust-based Editor) 的 Contributor，同時也是 Zed Guild Bug Bashers 的成員，曾為 Zed 與 OpenCode 貢獻過程式碼。
 
@@ -101,7 +101,7 @@ Rust enthusiast.
 CS / ME @NTNU  
 - building systems, breaking illusions
 
-https://github.com/G36maid 
+[G36maid's GitHub](https://github.com/G36maid)
 
 ### 🍟 開胃菜
 
