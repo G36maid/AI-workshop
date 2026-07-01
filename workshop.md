@@ -14,13 +14,13 @@
 
 | 段落 | 時間估計 | 對應 insight |
 |---|---|---|
-| Block 1：自我介紹 | 10-15 min | INSIGHT-9（誠實定位）|
-| Block 2：祛魅 — AI / Agent 到底是什麼 + Mini Agent 現場實作 + 實驗 | 60-90 min | INSIGHT-1, 2, 3 |
+| Block 1：自我介紹 | 10-15 min | INSIGHT-9|
+| Block 2：AI / Agent 到底是什麼 + Mini Agent 現場實作 + 實驗 | 60-90 min | INSIGHT-1, 2, 3 |
 | Block 3：環境配置 + First run | 30-40 min | INSIGHT-3, 8 |
-| 主場 Block A：MCP 是什麼、直接配起來、兩種不同的設計思路 | 40-60 min | INSIGHT-5 |
-| 主場 Block B：SKILL 是什麼 + 手搓一個 | 20-30 min | — |
-| **主場 Block C：鎮館之寶 — 多模型編排 + live config show-and-tell** | **40-50 min** | **INSIGHT-4** |
-| **主場 Block D：自建 context 語料庫 + AGENTS.md 深講** | **30-40 min** | **INSIGHT-7, 8** |
+| Block A：MCP 是什麼、直接配起來、兩種不同的設計思路 | 40-60 min | INSIGHT-5 |
+| Block B：SKILL 是什麼 + 手搓一個 | 20-30 min | — |
+| **Block C：多模型編排 + live config show-and-tell** | **40-50 min** | **INSIGHT-4** |
+| **Block D：自建 context 語料庫 + AGENTS.md 深講** | **30-40 min** | **INSIGHT-7, 8** |
 
 ### 下半場（下午）：subagent + omo（條件性）
 
