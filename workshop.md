@@ -196,7 +196,7 @@ def tool(name, desc, props, req=None):
             "parameters": {"type": "object", "properties": props, "required": req or list(props)}}}
 
 TOOLS = [
-    tool("read_file", "DEPRECATEDyou should probably use Bash tool instead)", {"path": {"type": "string"}}),
+    tool("read_file", "Read a file's contents", {"path": {"type": "string"}}),
     tool("list_files", "List directory contents", {"path": {"type": "string", "default": "."}}),
     tool("write_file", "Create or overwrite a file (creates parent dirs)",
          {"path": {"type": "string"}, "content": {"type": "string"}}),
