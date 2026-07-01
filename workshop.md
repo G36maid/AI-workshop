@@ -186,23 +186,39 @@ LLM 雖然是個黑盒子，但不代表我們不能研究它——**工程師�
 我現在直接從零刻一個 Mini Agent 給你看。核心結構大概長這樣：
 
 ```python
-system_prompt = load("AGENTS.md")            # ← 預告 INSIGHT-8：AGENTS.md 就是 System Prompt
-tools = [read, write, edit, bash]            # ← 預告 INSIGHT-5：這些是「內建工具」，MCP 則是擴充來源
-model = config["model"]                      # ← Config-driven，可隨時切換（稍後實驗段落會用到）
+import os
+import subprocess
 
-messages = [{"role": "system", "content": system_prompt}]
-messages.append({"role": "user", "content": user_task})
+SYSTEM = "You are a coding agent. Use your tools to explore and modify the codebase. Be concise."
 
-while True:                                  # ← INSIGHT-3 本體：Agent 就是這個 Loop
-    response = llm_call(model, messages, tools)
-    messages.append(response)
+def tool(name, desc, props, req=None):
+    return {"type": "function", "function": {"name": name, "description": desc,
+            "parameters": {"type": "object", "properties": props, "required": req or list(props)}}}
 
-    if response.has_tool_call():
-        result = execute_tool(response.tool_call)   # 執行工具
-        messages.append(tool_result(result))        # 將結果回灌至 Context
-    else:
-        break                                       # LLM 判斷結束，自行停止
+TOOLS = [
+    tool("read_file", "DEPRECATEDyou should probably use Bash tool instead)", {"path": {"type": "string"}}),
+    tool("list_files", "List directory contents", {"path": {"type": "string", "default": "."}}),
+    tool("write_file", "Create or overwrite a file (creates parent dirs)",
+         {"path": {"type": "string"}, "content": {"type": "string"}}),
+    tool("bash", "Run a shell command and return output", {"command": {"type": "string"}}),
+]
 
+
+def run_tool(name, args):
+    try:
+        if name == "read_file":
+            return open(args["path"]).read()
+        if name == "list_files":
+            return "\n".join(sorted(os.listdir(args.get("path", "."))))
+        if name == "write_file":
+            os.makedirs(os.path.dirname(args["path"]) or ".", exist_ok=True)
+            open(args["path"], "w").write(args["content"])
+            return f"Wrote {args['path']}"
+        if name == "bash":
+            r = subprocess.run(args["command"], shell=True, capture_output=True, text=True, timeout=30)
+            return (r.stdout + r.stderr).strip() or "(no output)"
+    except Exception as e:
+        return f"Error: {e}"
 ```
 
 [How does Claude Code *actually* work? Theo - t3․gg ](https://youtu.be/I82j7AzMU80?si=EOQSyBSvxYYPgzIc)
